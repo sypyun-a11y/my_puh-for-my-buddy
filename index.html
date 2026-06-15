@@ -626,7 +626,7 @@ function connectCouple(code,silent){
   docRef=db.collection('couples').doc('c_'+code);
   updateSyncUI('connecting');
   docRef.get().then(snap=>{
-    if(snap.exists&&snap.data().state){applyRemote(snap.data());}
+    if(snap.exists&&snap.data().state){applyRemote(snap.data());pushNow();}
     else{pushNow();}
     unsub=docRef.onSnapshot(s=>{
       if(s.exists&&s.data().state&&!s.metadata.hasPendingWrites)applyRemote(s.data());
