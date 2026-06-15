@@ -267,6 +267,13 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
 @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.2}}
 
 .lvbar{height:9px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px;}
+/* playlist */
+.pl-card{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:8px;margin-bottom:9px;cursor:pointer;}
+.pl-thumb{width:74px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;background:#111;}
+.pl-meta{flex:1;min-width:0;}
+.pl-by{font-size:12px;color:var(--muted);}
+.pl-play{font-size:18px;color:#fff;flex-shrink:0;}
+
 /* lock screen */
 .lock{position:fixed;inset:0;z-index:80;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;}
 .lock.show{display:flex;animation:fade .3s ease;}
@@ -419,25 +426,46 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
     <div id="forest-list"></div>
   </section>
 
-  <!-- GAME -->
+  <!-- ENTERTAINMENT -->
   <section class="screen" id="s-game">
     <div class="top">
-      <div><div class="hello">출퇴근 심심할 때</div><div class="name">도토리 <b>점프</b></div></div>
+      <div><div class="hello">출퇴근 같이 놀자</div><div class="name">엔터<b>테인먼트</b></div></div>
       <button class="iconbtn" onclick="go('home')">🏠</button>
     </div>
-    <div class="card" style="display:flex;justify-content:space-around;text-align:center">
-      <div><div class="muted" style="font-size:11px" id="g-mylabel">내 최고</div><div id="g-mybest" style="font-size:22px;font-weight:900">0</div></div>
-      <div><div class="muted" style="font-size:11px" id="g-olabel">상대 최고</div><div id="g-obest" style="font-size:22px;font-weight:900">0</div></div>
-      <div><div class="muted" style="font-size:11px">점수</div><div id="g-score" style="font-size:22px;font-weight:900">0</div></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn small" id="seg-list" onclick="setEntView('list')" style="flex:1">🎵 플레이리스트</button>
+      <button class="btn small ghost" id="seg-game" onclick="setEntView('game')" style="flex:1">🎮 게임</button>
     </div>
-    <div style="position:relative">
-      <canvas id="gcanvas" style="width:100%;height:280px;background:#000;border:1px solid var(--card-bd);border-radius:18px;display:block"></canvas>
-      <div id="g-msg" onclick="gameTap()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;cursor:pointer">
-        <div style="font-size:17px;font-weight:800">탭해서 시작 🌰</div>
-        <div class="muted" style="font-size:12px;margin-top:6px">탭 = 점프 · 장애물 넘기</div>
+
+    <!-- playlist -->
+    <div id="ent-list">
+      <div class="card">
+        <div class="row">
+          <input class="fld" id="pl-input" placeholder="유튜브 링크 붙여넣기">
+          <button class="btn small" onclick="addSong()">추가</button>
+        </div>
       </div>
+      <div id="pl-player" style="margin-bottom:12px"></div>
+      <div class="sec-title">우리 플레이리스트 <span class="line"></span></div>
+      <div id="pl-list"></div>
     </div>
-    <div class="muted center" style="font-size:12px;margin-top:8px">화면 탭(또는 스페이스바)으로 점프! 둘이 최고기록 겨뤄봐 🏆</div>
+
+    <!-- game -->
+    <div id="ent-game" style="display:none">
+      <div class="card" style="display:flex;justify-content:space-around;text-align:center">
+        <div><div class="muted" style="font-size:11px" id="g-mylabel">내 최고</div><div id="g-mybest" style="font-size:22px;font-weight:900">0</div></div>
+        <div><div class="muted" style="font-size:11px" id="g-olabel">상대 최고</div><div id="g-obest" style="font-size:22px;font-weight:900">0</div></div>
+        <div><div class="muted" style="font-size:11px">점수</div><div id="g-score" style="font-size:22px;font-weight:900">0</div></div>
+      </div>
+      <div style="position:relative">
+        <canvas id="gcanvas" style="width:100%;height:280px;background:#000;border:1px solid var(--card-bd);border-radius:18px;display:block"></canvas>
+        <div id="g-msg" onclick="gameTap()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;cursor:pointer">
+          <div style="font-size:17px;font-weight:800">탭해서 시작 🌰</div>
+          <div class="muted" style="font-size:12px;margin-top:6px">탭 = 점프 · 장애물 넘기</div>
+        </div>
+      </div>
+      <div class="muted center" style="font-size:12px;margin-top:8px">화면 탭(또는 스페이스바)으로 점프! 둘이 최고기록 겨뤄봐 🏆</div>
+    </div>
   </section>
 
   <!-- SETTINGS -->
@@ -454,11 +482,11 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
     <div class="card">
       <label class="lbl">이 폰은 누구 거? (나)</label>
       <div class="row" style="margin-bottom:4px">
-        <button class="btn small" id="who-seoyun" onclick="setWho('seoyun')" style="flex:1">🌰 서윤</button>
+        <button class="btn small" id="who-seoyun" onclick="setWho('seoyun')" style="flex:1">🌰 푸호</button>
         <button class="btn small ghost" id="who-minyeong" onclick="setWho('minyeong')" style="flex:1">👑 민영</button>
       </div>
       <label class="lbl" style="margin-top:12px">🌰 이름</label>
-      <input class="fld" id="set-name-seoyun" placeholder="서윤">
+      <input class="fld" id="set-name-seoyun" placeholder="푸호">
       <label class="lbl" style="margin-top:12px">👑 이름</label>
       <input class="fld" id="set-name-minyeong" placeholder="민영">
       <label class="lbl" style="margin-top:12px">사귄 날 (디데이)</label>
@@ -500,7 +528,7 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
     <button data-t="date" onclick="go('date')"><span class="ic">💕</span>데이트</button>
     <button data-t="memo" onclick="go('memo')"><span class="ic">📸</span>피드</button>
     <button data-t="forest" onclick="go('forest')"><span class="ic">🎍</span>숲</button>
-    <button data-t="game" onclick="go('game')"><span class="ic">🎮</span>게임</button>
+    <button data-t="game" onclick="go('game')"><span class="ic">🎬</span>엔터</button>
   </div>
 </div>
 
@@ -520,7 +548,7 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
   <h1>누구세요? 🥰</h1>
   <div class="sub">이 폰은 누구 거야? 한 번만 고르면 돼<br>(나중에 설정에서 바꿀 수 있어)</div>
   <div style="display:flex;gap:14px;margin-top:6px">
-    <button class="btn" style="padding:20px 26px;line-height:1.5" onclick="pickWho('seoyun')">🌰<br>서윤</button>
+    <button class="btn" style="padding:20px 26px;line-height:1.5" onclick="pickWho('seoyun')">🌰<br>푸호</button>
     <button class="btn ghost" style="padding:20px 26px;line-height:1.5" onclick="pickWho('minyeong')">👑<br>민영</button>
   </div>
 </div>
@@ -541,8 +569,8 @@ const MKEYS=['seoyun','minyeong'];
 function memberDefault(){return {missionsDate:'',missions:{},photos:{},streak:0,lastCounted:'',level:1,xp:0,gifts:[]};}
 const DEFAULT={
   anniv:'2024-12-01', pin:'1201', quoteIdx:0,
-  names:{seoyun:'서윤', minyeong:'민영'},
-  dates:[], dateDone:[], feed:[], forest:[],
+  names:{seoyun:'푸호', minyeong:'민영'},
+  dates:[], dateDone:[], feed:[], forest:[], playlist:[],
   members:{seoyun:memberDefault(), minyeong:memberDefault()}
 };
 let WHO=localStorage.getItem('usworld_who')||'';   // 'seoyun' | 'minyeong'
@@ -551,8 +579,8 @@ function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?Objec
 function normalize(s){
   if(!s.members)s.members={};
   for(const k of MKEYS)s.members[k]=Object.assign(memberDefault(),s.members[k]||{});
-  if(!s.names)s.names={seoyun:'서윤',minyeong:'민영'};
-  ['dates','dateDone','feed','forest'].forEach(k=>{if(!Array.isArray(s[k]))s[k]=[];});
+  if(!s.names)s.names={seoyun:'푸호',minyeong:'민영'};
+  ['dates','dateDone','feed','forest','playlist'].forEach(k=>{if(!Array.isArray(s[k]))s[k]=[];});
   if(typeof s.quoteIdx!=='number')s.quoteIdx=0;
   if(typeof s.pin!=='string')s.pin='1201';
   return s;
@@ -562,7 +590,7 @@ function meId(){return WHO||'seoyun';}
 function otherId(){return meId()==='seoyun'?'minyeong':'seoyun';}
 function meM(){return S.members[meId()];}
 function otherM(){return S.members[otherId()];}
-function mName(id){return (S.names&&S.names[id])||(id==='seoyun'?'서윤':'민영');}
+function mName(id){return (S.names&&S.names[id])||(id==='seoyun'?'푸호':'민영');}
 function mEmoji(id){return id==='seoyun'?'🌰':'👑';}
 
 /* ============ Firebase 동기화 설정 ============ */
@@ -622,6 +650,7 @@ function applyRemote(data){
   // 공유 목록은 합쳐서 어느 쪽 글도 안 사라지게
   Snew.feed=mergeById(Snew.feed,S.feed);
   Snew.forest=mergeById(Snew.forest,S.forest);
+  Snew.playlist=mergeById(Snew.playlist,S.playlist);
   Snew.dates=mergeVals(Snew.dates,S.dates);
   Snew.dateDone=mergeVals(Snew.dateDone,S.dateDone);
   S=Snew;
@@ -737,7 +766,7 @@ const DATE_IDEAS=[
   '고기 뿌시기 데이다!! 고기 먹자 꼬기!! 🍖',
   '2주년 여행 계획 세우기 ✈️',
 ];
-const COUPONS=['서울-분당 픽업권 🚗','먹고 싶은 거 다 사주기권 🍽️','무제한 심부름권 🏃','백허그 무한권 🤗','잔소리 3회 차단권 🔇','30분동안 안아주기권 🫂','3분동안 간지럼 태우기권 🤭','엉덩이로 이름 써주기권 🍑','영화 고르기 우선권 🎬','오늘 메뉴 골라주기권 🍚','늦잠 자도 봐주기권 ⏰','보고 싶을 때 즉시 출동권 🚨','퇴근 후 무조건 호출권 📞','오늘 하루 내 말 다 들어주기권 👂','꼭 안아주기권 🤍','춤 춰주기권 💃','드라이브권 🛣️','데이트 루트 정하기권 🗺️','맛집 예약 책임권 🍴','투정 무제한 받아주기권 🙆','서윤 말랑이 사주기권 🧸','서윤 치킨 사주기권 🍗','서윤 레고 사는거 허락해주기권 🧱'];
+const COUPONS=['서울-분당 픽업권 🚗','먹고 싶은 거 다 사주기권 🍽️','무제한 심부름권 🏃','백허그 무한권 🤗','잔소리 3회 차단권 🔇','30분동안 안아주기권 🫂','3분동안 간지럼 태우기권 🤭','엉덩이로 이름 써주기권 🍑','영화 고르기 우선권 🎬','오늘 메뉴 골라주기권 🍚','늦잠 자도 봐주기권 ⏰','보고 싶을 때 즉시 출동권 🚨','퇴근 후 무조건 호출권 📞','오늘 하루 내 말 다 들어주기권 👂','꼭 안아주기권 🤍','춤 춰주기권 💃','드라이브권 🛣️','데이트 루트 정하기권 🗺️','맛집 예약 책임권 🍴','투정 무제한 받아주기권 🙆','푸호 말랑이 사주기권 🧸','푸호 치킨 사주기권 🍗','푸호 레고 사는거 허락해주기권 🧱'];
 const LETTERS=[
   '민영아 너로 인해서 내 세상은 더 다채로워졌어. 많이 많이 사랑해.',
   '회사에서 많이 힘들지? 버티고 버티다 힘들 때 기대는 게 아니라 힘들면 일단 기대는 거야 알겠지?',
@@ -771,7 +800,7 @@ function rerenderCurrent(){
   if(t==='date')renderDate();
   if(t==='memo')renderFeed();
   if(t==='forest')renderForest();
-  if(t==='game')renderGame();
+  if(t==='game')renderEnt();
   if(t==='set')renderSet();
 }
 
@@ -1088,6 +1117,48 @@ function renderForest(){
 function addForest(){const v=document.getElementById('forest-input').value.trim();if(!v)return;S.forest.unshift({id:'g'+Date.now()+'-'+rand(9999),ts:Date.now(),text:v,date:todayStr().slice(5),hugs:0});document.getElementById('forest-input').value='';save();renderForest();toast('바람에 날려보냈어 🍃');}
 function hug(i){S.forest[i].hugs=(S.forest[i].hugs||0)+1;save();renderForest();}
 
+/* ---------- entertainment: 플레이리스트 + 게임 ---------- */
+let entView='list';
+function renderEnt(){ setEntView(entView); }
+function setEntView(v){
+  entView=v;
+  document.getElementById('seg-list').className='btn small'+(v==='list'?'':' ghost');
+  document.getElementById('seg-game').className='btn small'+(v==='game'?'':' ghost');
+  document.getElementById('ent-list').style.display=v==='list'?'block':'none';
+  document.getElementById('ent-game').style.display=v==='game'?'block':'none';
+  if(v==='game'){renderGame();}
+  else{G.run=false;renderPlaylist();}
+}
+function ytId(u){
+  if(!u)return''; u=u.trim();
+  const m=u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
+  if(m)return m[1];
+  if(/^[\w-]{11}$/.test(u))return u;
+  return'';
+}
+function addSong(){
+  const inp=document.getElementById('pl-input');const id=ytId(inp.value);
+  if(!id){toast('유튜브 링크를 확인해줘 🎵');return;}
+  if(!S.playlist)S.playlist=[];
+  S.playlist.unshift({id:'p'+Date.now()+'-'+rand(9999),ts:Date.now(),vid:id,who:mName(meId())});
+  inp.value='';save();renderPlaylist();toast('플레이리스트에 추가 🎵');
+}
+function playSong(vid){
+  document.getElementById('pl-player').innerHTML=
+    `<div style="position:relative;padding-bottom:56.25%;height:0;border-radius:16px;overflow:hidden;border:1px solid var(--card-bd)">`+
+    `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&playsinline=1" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+}
+function delSong(i){ if(confirm('이 곡 뺄까?')){S.playlist.splice(i,1);save();renderPlaylist();} }
+function renderPlaylist(){
+  const box=document.getElementById('pl-list');const pl=S.playlist||[];
+  if(!pl.length){box.innerHTML='<div class="empty">아직 곡이 없어 🎧<br>유튜브 링크 붙여서 추가해봐</div>';return;}
+  box.innerHTML=pl.map((s,i)=>`<div class="pl-card" onclick="playSong('${s.vid}')">
+    <img class="pl-thumb" src="https://i.ytimg.com/vi/${s.vid}/mqdefault.jpg" onerror="this.style.opacity=.3">
+    <div class="pl-meta"><div class="pl-by">▶ 재생 · ${esc(s.who||'')} 추가</div></div>
+    <button class="feed-del" onclick="event.stopPropagation();delSong(${i})">삭제</button>
+  </div>`).join('');
+}
+
 /* ---------- game: 도토리 점프 (엔들리스 러너) ---------- */
 let G={run:false,jump:null,raf:0,bound:false};
 function gBest(id){return S.members[id].jumpBest||0;}
@@ -1184,7 +1255,7 @@ function renderSet(){
   }
 }
 function saveSet(){
-  S.names.seoyun=document.getElementById('set-name-seoyun').value.trim()||'서윤';
+  S.names.seoyun=document.getElementById('set-name-seoyun').value.trim()||'푸호';
   S.names.minyeong=document.getElementById('set-name-minyeong').value.trim()||'민영';
   S.anniv=document.getElementById('set-anniv').value;
   save();toast('저장 완료 💾');renderSet();renderHome();
