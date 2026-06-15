@@ -1,0 +1,23 @@
+# 도토리집 — 9시 푸시 스케줄러
+# 레포 안 경로: .github/workflows/push.yml 에 두기
+name: push-reminders
+
+on:
+  schedule:
+    - cron: '0 0 * * *'    # 00:00 UTC = 오전 9시(KST) — 오늘의 미션 확인
+    - cron: '0 12 * * *'   # 12:00 UTC = 저녁 9시(KST) — 인증했어?
+  workflow_dispatch:        # 수동 실행(테스트)용 버튼
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm init -y && npm install firebase-admin@12
+      - run: node send.js
+        env:
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          SCHED: ${{ github.event.schedule }}
