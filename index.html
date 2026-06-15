@@ -273,6 +273,7 @@ label.lbl{font-size:12px;color:var(--muted);margin:4px 2px 6px;display:block;}
 .pl-meta{flex:1;min-width:0;}
 .pl-by{font-size:12px;color:var(--muted);}
 .pl-play{font-size:18px;color:#fff;flex-shrink:0;}
+.ytbtn{background:rgba(255,255,255,.1);border:1px solid var(--card-bd);color:#fff;border-radius:10px;padding:6px 9px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;}
 
 /* lock screen */
 .lock{position:fixed;inset:0;z-index:80;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;}
@@ -1154,10 +1155,12 @@ function renderPlaylist(){
   if(!pl.length){box.innerHTML='<div class="empty">아직 곡이 없어 🎧<br>유튜브 링크 붙여서 추가해봐</div>';return;}
   box.innerHTML=pl.map((s,i)=>`<div class="pl-card" onclick="playSong('${s.vid}')">
     <img class="pl-thumb" src="https://i.ytimg.com/vi/${s.vid}/mqdefault.jpg" onerror="this.style.opacity=.3">
-    <div class="pl-meta"><div class="pl-by">▶ 재생 · ${esc(s.who||'')} 추가</div></div>
+    <div class="pl-meta"><div class="pl-by">▶ 탭하면 재생 · ${esc(s.who||'')} 추가</div></div>
+    <button class="ytbtn" onclick="event.stopPropagation();openYt('${s.vid}')">유튜브 ↗</button>
     <button class="feed-del" onclick="event.stopPropagation();delSong(${i})">삭제</button>
   </div>`).join('');
 }
+function openYt(vid){window.open('https://www.youtube.com/watch?v='+vid,'_blank');}
 
 /* ---------- game: 도토리 점프 (엔들리스 러너) ---------- */
 let G={run:false,jump:null,raf:0,bound:false};
